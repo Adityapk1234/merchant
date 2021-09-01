@@ -32,6 +32,42 @@ app.post('/create',(req, res)=>{
     );
 });
 
+app.get('/products',(req, res) => {
+  db.query(
+    "Select * from product", 
+    (err, result) => {
+    if (err) {
+      console.log(err);
+    } else {
+      res.send(result);
+    }
+  })
+})
+
+app.put('/update', (req, res) => {
+  const id= req.body.id;
+  const name=req.body.name;
+  db.query("UPDATE product SET name= ? where id =?",[name, id], (err, result) => {
+    if(err) {
+      console.log(err)
+    } else {
+      res.send(result);
+    }
+  })
+})
+
+app.delete('/delete/:id', (req, res) => {
+  const id = req.params.id;
+  db.query("DELETE FROM product where id= ?", 
+    id, (err, result)=>{
+      if(err) {
+        console.log(err)
+      } else {
+        res.send(result)
+      }
+    })
+})
+
 app.listen(3001 ,()=> {
   console.log("yay your server is running on port 3001")
 });

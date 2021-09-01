@@ -12,6 +12,9 @@ const AddTask =({onAdd}) =>{
 	const [seoMeta, setSeoMeta]=useState('');
 	const [file, setFile] = useState('');
 
+	const [productList, setProductList] = useState([]);
+	const [newName, setNewName] = useState('');
+
 	const onSubmit =async (e)=>{
 		e.preventDefault()
 		if(!name){
@@ -39,6 +42,40 @@ const AddTask =({onAdd}) =>{
 		setSeoMeta('')
 		setSeoMetaDescription('')
 		setDescription('')
+	}
+
+	const getProducts =() =>{
+		axios.get("http://localhost:3001/products")
+			.then((response)=>{
+				setProductList(response.data)
+			})
+	}
+
+	const updateName=(id)=>{
+		axios.put("http://localhost:3001/update", {
+			name:newName,
+			id: id
+			})
+		.then((response)=> {
+			setProductList(productList.map((val) =>{
+				return val.id === id ? {
+					id : val.id, 
+					name: newName,
+					description: val.description,
+					seoMeta: val.seoMeta, 
+					seoMetaDescription: val.seoMetaDescription
+					 }: val
+			}));
+		})
+	}
+
+	const deleteProduct =(id) =>{
+		axios.delete(`http://localhost:3001/delete/${id}`)
+		.then((response) => {
+			setProductList(productList.filter((val) => {
+				return val.id !==id
+			}))
+		});
 	}
 
 	return(
@@ -103,9 +140,47 @@ const AddTask =({onAdd}) =>{
 						onChange={(e)=>setSeoMetaDescription(e.target.value)}
 					/>
 				</div>
-				<input type='submit' value={`Save product`}
-					   className='btn btn-block'/>
+				<input 
+						type='submit' 
+						value={`Save product`}
+					 	className='btn btn-block'/>
 			</form>
+			<div>
+				<input 
+						onClick={getProducts}
+						type='button' 
+					   	value={`Show products`}
+					   	className='btn btn-block'/>
+				{productList.map((val, key) => {
+					return ( 
+						<div className="productlist">
+							<h4>Name :{val.name}</h4>
+							<h4>Description :{val.description}</h4>
+							<div>
+								<input 
+									type='text'
+									onChange ={(e)=>setNewName(e.target.value)}
+									placeholder='enter new name' />
+								<input
+									onClick={()=>{updateName(val.id)}}
+									type='button'
+									value={'Update'} 	
+									style={{backgroundColor:'green', width:100}}
+									className='btn'
+								/>
+								<input
+									onClick={()=>{deleteProduct(val.id)}}
+									type='button'
+									value={'Delete'} 	
+									style={{backgroundColor:'green', width:100}}
+									className='btn'
+								/>
+							</div>
+						</div>
+					)
+				})}
+			</div>
+
 		</Fragment>
 		)
 }
