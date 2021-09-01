@@ -20,12 +20,20 @@ const AddTask =({onAdd}) =>{
 		}
 
 		onAdd({name, description, seoMeta, seoMetaDescription})
-
-		const data=new FormData();
-		data.append("file",file);
-		axios.post("http://localhost:3000/upload",data)
-			.then(res => console.log(res))
-			.catch(err => console.log(err));
+	
+		axios.post('http://localhost:3001/create', {
+			name:name,
+			description: description,
+			seoMeta: seoMeta, 
+			seoMetaDescription: seoMetaDescription
+		}).then(()=>{
+			console.log("Success")
+		})
+		// const data=new FormData();
+		// data.append("file",file);
+		// axios.post("http://localhost:3000/upload",data)
+		// 	.then(res => console.log(res))
+		// 	.catch(err => console.log(err));
 
 		setName('')
 		setSeoMeta('')
