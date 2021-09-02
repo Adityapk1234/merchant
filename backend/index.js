@@ -1,103 +1,64 @@
-const express = require('express');
-const app= express()
-const mysql = require('mysql')
-const cors = require('cors')
+const express = require ('express')
+const mongoose = require ('mongoose')
+const cors = require ('cors')
+const app = express()
 
+const MerchantModel = require('./Merchant.js')
+
+app.use(express.json())
 app.use(cors());
-app.use(express.json());
-
-const db = mysql.createConnection({
-  user: "root",
-  host: "localhost",
-  password: "password",
-  database: "merchantproduct",
-});
-
-app.post('/create',(req, res)=>{
-  const name=req.body.name;
-  const description=req.body.description;
-  const seoMeta=req.body.seoMeta;
-  const seoMetaDescription=req.body.seoMetaDescription;
-
-  db.query(
-    "INSERT INTO product (name, description, seoname, seodescription) VALUES (?,?,?,?)",
-    [name, description, seoMeta, seoMetaDescription], 
-    (err, result) => {
-        if (err) {
-          console.log(err);
-        } else {
-          res.send("Values Inserted");
-        }
-      }
-    );
-});
-
-app.get('/products',(req, res) => {
-  db.query(
-    "Select * from product", 
-    (err, result) => {
-    if (err) {
-      console.log(err);
-    } else {
-      res.send(result);
-    }
-  })
+mongoose.connect('mongodb+srv://newuser:aditya_23@crud.igfry.mongodb.net/merchant?retryWrites=true&w=majority', {
+  useNewUrlParser: true,
 })
 
-app.put('/update', (req, res) => {
-  const id= req.body.id;
+app.post("/insert", async (req, res) => {
   const name=req.body.name;
-  db.query("UPDATE product SET name= ? where id =?",[name, id], (err, result) => {
+    const description=req.body.description;
+    const seoMeta=req.body.seoMeta;
+    const seoMetaDescription=req.body.seoMetaDescription; 
+
+  const merchant = new MerchantModel({
+    productName: name, 
+    productDescription: description,
+    seoName : seoMeta,
+    seoDescription : seoMetaDescription})
+  try {
+    await merchant.save()
+  }catch(err) {
+    console.log(err)
+  }
+})
+
+app.get("/read", async (req,res)=> {
+  MerchantModel.find({}, (err, result) =>{
     if(err) {
-      console.log(err)
-    } else {
-      res.send(result);
+      res.send(err)
     }
+    res.send(result)
   })
 })
 
-app.delete('/delete/:id', (req, res) => {
-  const id = req.params.id;
-  db.query("DELETE FROM product where id= ?", 
-    id, (err, result)=>{
-      if(err) {
-        console.log(err)
-      } else {
-        res.send(result)
-      }
+app.put("/update", async (req, res) => {
+  const name=req.body.newName;
+    const id = req.body.id;
+
+  try {
+    await MerchantModel.findById(id, (err, updatedName) => {
+      updatedName.productName = name
+      updatedName.save()
+      res.send("update")
     })
+  }catch(err) {
+    console.log(err)
+  }
 })
 
-app.listen(3001 ,()=> {
-  console.log("yay your server is running on port 3001")
-});
+app.delete("/delete/:id", async (req, res) => {
+  const id= req.params.id;
+  await MerchantModel.findByIdAndRemove(id).exec();
+  res.send("Deleted");
+})
 
-
-// const router = express.Router();
-// const multer = require('multer');
-
-// const fs = require("fs");
-// const { promisify } = require("util");
-// const pipeline = promisify(require("stream").pipeline);
-// /* GET home page. */
-// router.get('/', function(req, res, next) {
-//   res.render('index', { title: 'Express' });
-// });
-
-// const upload=multer();
-// router.post("/upload", upload.single("file"), async function(req, res, next) {
-//   const {
-//     file,
-//     body: { name }
-//   } = req;
-
-//   const fileName = name + file.detectedFileExtension;
-//   await pipeline(
-//     file.stream,
-//     fs.createWriteStream(`${__dirname}/../public/images/${fileName}`)
-//   );
-
-//   res.send("File uploaded as " + fileName);
-// });
-
-// module.exports = router;
+app.listen(3001, () => {
+  console.log('Server running on port 3001')
+})

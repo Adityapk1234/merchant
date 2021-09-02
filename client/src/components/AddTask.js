@@ -11,7 +11,6 @@ const AddTask =({onAdd}) =>{
 	const [seoMetaDescription, setSeoMetaDescription]=useState('');
 	const [seoMeta, setSeoMeta]=useState('');
 	const [file, setFile] = useState('');
-
 	const [productList, setProductList] = useState([]);
 	const [newName, setNewName] = useState('');
 
@@ -24,7 +23,7 @@ const AddTask =({onAdd}) =>{
 
 		onAdd({name, description, seoMeta, seoMetaDescription})
 	
-		axios.post('http://localhost:3001/create', {
+		axios.post('http://localhost:3001/insert', {
 			name:name,
 			description: description,
 			seoMeta: seoMeta, 
@@ -32,11 +31,6 @@ const AddTask =({onAdd}) =>{
 		}).then(()=>{
 			console.log("Success")
 		})
-		// const data=new FormData();
-		// data.append("file",file);
-		// axios.post("http://localhost:3000/upload",data)
-		// 	.then(res => console.log(res))
-		// 	.catch(err => console.log(err));
 
 		setName('')
 		setSeoMeta('')
@@ -45,7 +39,7 @@ const AddTask =({onAdd}) =>{
 	}
 
 	const getProducts =() =>{
-		axios.get("http://localhost:3001/products")
+		axios.get("http://localhost:3001/read")
 			.then((response)=>{
 				setProductList(response.data)
 			})
@@ -53,20 +47,19 @@ const AddTask =({onAdd}) =>{
 
 	const updateName=(id)=>{
 		axios.put("http://localhost:3001/update", {
-			name:newName,
-			id: id
-			})
-		.then((response)=> {
-			setProductList(productList.map((val) =>{
-				return val.id === id ? {
-					id : val.id, 
-					name: newName,
-					description: val.description,
-					seoMeta: val.seoMeta, 
-					seoMetaDescription: val.seoMetaDescription
-					 }: val
-			}));
+			id: id,
+			newName:newName
 		})
+		// .then((response)=> {
+		// 	setProductList(productList.map((val) =>{
+		// 		return val.id === id ? {
+		// 			productName: newName,
+		// 			productDescription: val.description,
+		// 			seoName: val.seoMeta, 
+		// 			seoDescription: val.seoMetaDescription
+		// 			 }: val
+		// 	}));
+		// })
 	}
 
 	const deleteProduct =(id) =>{
@@ -153,23 +146,23 @@ const AddTask =({onAdd}) =>{
 					   	className='btn btn-block'/>
 				{productList.map((val, key) => {
 					return ( 
-						<div className="productlist">
-							<h4>Name :{val.name}</h4>
-							<h4>Description :{val.description}</h4>
+						<div key={val._id} className="productlist">
+							<h4>Name :{val.productName}</h4>
+							<h4>Description :{val.productDescription}</h4>
 							<div>
 								<input 
 									type='text'
 									onChange ={(e)=>setNewName(e.target.value)}
 									placeholder='enter new name' />
 								<input
-									onClick={()=>{updateName(val.id)}}
+									onClick={()=>{updateName(val._id)}}
 									type='button'
 									value={'Update'} 	
 									style={{backgroundColor:'green', width:100}}
 									className='btn'
 								/>
 								<input
-									onClick={()=>{deleteProduct(val.id)}}
+									onClick={()=>{deleteProduct(val._id)}}
 									type='button'
 									value={'Delete'} 	
 									style={{backgroundColor:'green', width:100}}
