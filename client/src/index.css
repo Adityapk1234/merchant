@@ -87,6 +87,12 @@ body {
 }
 
 .form-control .form_input {
-  height: 140px;
+  height: 40px;
   margin-top: 5px;
+}
+
+.productlist {
+  border: 1px solid black;
+  margin-bottom: 10px;
+  padding-left: 4px;
 }

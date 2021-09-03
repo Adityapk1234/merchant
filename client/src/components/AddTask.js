@@ -5,7 +5,7 @@ import { MdFormatUnderlined } from "react-icons/md";
 import { BsCardImage } from "react-icons/bs";
 import axios from 'axios'
 
-const AddTask =({onAdd}) =>{
+const AddTask =() =>{
 	const [name,setName]=useState('')
 	const [description,setDescription]=useState('');
 	const [seoMetaDescription, setSeoMetaDescription]=useState('');
@@ -20,8 +20,6 @@ const AddTask =({onAdd}) =>{
 			alert('Please enter data')
 			return
 		}
-
-		onAdd({name, description, seoMeta, seoMetaDescription})
 	
 		axios.post('http://localhost:3001/insert', {
 			name:name,
@@ -50,16 +48,6 @@ const AddTask =({onAdd}) =>{
 			id: id,
 			newName:newName
 		})
-		// .then((response)=> {
-		// 	setProductList(productList.map((val) =>{
-		// 		return val.id === id ? {
-		// 			productName: newName,
-		// 			productDescription: val.description,
-		// 			seoName: val.seoMeta, 
-		// 			seoDescription: val.seoMetaDescription
-		// 			 }: val
-		// 	}));
-		// })
 	}
 
 	const deleteProduct =(id) =>{
@@ -99,11 +87,10 @@ const AddTask =({onAdd}) =>{
 						onChange={(e)=>setDescription(e.target.value)}
 					/>
 				</div>
-				<div className='form-control'>
-					<label> Upload Media</label>
+				<div >
+					<label> Upload Media<br /></label>
 					<input 
 						type='file'
-						accept='.png'
 						onChange={(e)=>setFile(e.target.files[0])}
 					/>
 				</div>
@@ -151,6 +138,7 @@ const AddTask =({onAdd}) =>{
 							<h4>Description :{val.productDescription}</h4>
 							<div>
 								<input 
+									style={{height:25}}
 									type='text'
 									onChange ={(e)=>setNewName(e.target.value)}
 									placeholder='enter new name' />
