@@ -24,37 +24,34 @@ app.post("/insert", async (req, res) => {
     seoName : seoMeta,
     seoDescription : seoMetaDescription})
     
-    await merchant.save((err, result) =>{
-      if(err) {
-        res.send(err)
-      }
-      res.send(result)
-    })
+    await merchant.save();
+    res.send(merchant)
 })
 
 app.get("/read", async (req,res)=> {
   MerchantModel.find({}, (err, result) =>{
     if(err) {
       res.send(err)
-    }
+    }else {
     res.send(result)
+  }
   })
 })
 
 app.put("/update", async (req, res) => {
-  const name=req.body.newName;
-    const id = req.body.id;
-
+  const newName=req.body.backendnewName;
+  const id = req.body.id;
+  console.log(newName,id)
   try {
-    await MerchantModel.findById(id, (err, updatedName) => {
-      updatedName.productName = name
-      updatedName.save()
-      res.send("update")
+    await MerchantModel.findById(id, (err, nameToUpdate) => {
+      nameToUpdate.productName = String(newName);
+      nameToUpdate.save();
     })
   }catch(err) {
     console.log(err)
   }
-})
+  res.send("Updated");
+});
 
 app.delete("/delete/:id", async (req, res) => {
   const id= req.params.id;

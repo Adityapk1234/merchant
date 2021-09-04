@@ -1,4 +1,4 @@
-import {useState, Fragment} from 'react'
+import {useState, useEffect, Fragment} from 'react'
 import { FiAlignCenter, FiAlignJustify, FiAlignRight, FiAlignLeft } from "react-icons/fi";
 import { AiOutlineFontColors, AiOutlineVideoCamera, AiOutlineItalic, AiOutlineUnorderedList, AiOutlineBold } from "react-icons/ai";
 import { MdFormatUnderlined } from "react-icons/md";
@@ -14,7 +14,7 @@ const AddTask =() =>{
 	const [productList, setProductList] = useState([]);
 	const [newName, setNewName] = useState('');
 
-	const onSubmit =async (e)=>{
+	const onSubmit = (e)=>{
 		e.preventDefault()
 		if(!name){
 			alert('Please enter data')
@@ -26,43 +26,54 @@ const AddTask =() =>{
 			description: description,
 			seoMeta: seoMeta, 
 			seoMetaDescription: seoMetaDescription
-		}).then(()=>{
-			console.log("Success");
-	
+		}).then((response)=>{
+			setProductList([
+				...productList, {
+				_id: response.data._id,
+				productName:name,
+				productDescription: description
+				},
+			])
 		})
-
 		setName('')
 		setSeoMeta('')
 		setSeoMetaDescription('')
 		setDescription('')
 	}
 
-	const getProducts =() =>{
-		axios.get("http://localhost:3001/read")
-			.then((response)=>{
-				setProductList(response.data)
-			})
-	}
-
 	const updateName=(id)=>{
 		axios.put("http://localhost:3001/update", {
-			id: id,
-			newName:newName
+			backendnewName:newName,
+			id: id
+		}).then(() =>{
+			setProductList(productList.map((product) => {
+				return product._id === id ? { _id:id, productName:newName, productDescription:product.productDescription}: product;
+				})
+			)
 		})
 	}
 
+	useEffect(() =>{
+		axios.get("http://localhost:3001/read")
+			.then((response)=>{
+				setProductList(response.data)
+			}).catch(() => {
+				console.log("Err")
+			})
+	},[]);
+
 	const deleteProduct =(id) =>{
 		axios.delete(`http://localhost:3001/delete/${id}`)
-		.then((response) => {
+		.then(() => {
 			setProductList(productList.filter((product) => {
-				return product.id !==id
+				return product._id !==id
 			}))
 		});
 	}
 
 	return(
 		<Fragment>
-			<form className='add-form' onSubmit={onSubmit}>
+			<div className='add-form'>
 				<div className='form-control'>
 					<label> Product title</label>
 					<input
@@ -122,21 +133,24 @@ const AddTask =() =>{
 					/>
 				</div>
 				<input 
-						type='submit' 
+						type='button' 
+						onClick={onSubmit}
 						value={`Save product`}
 					 	className='btn btn-block'/>
-			</form>
+			</div>
 			<div>
-				<input 
+				{/*<input 
 						onClick={getProducts}
 						type='button' 
 					   	value={`Show products`}
-					   	className='btn btn-block'/>
+					   	className='btn btn-block'/>*/}
 				{productList.map((product) => {
 					return ( 
-						<div key={product._id} className="productlist">
-							<h4>Name :{product.productName}</h4>
-							<h4>Description :{product.productDescription}</h4>
+						<div key={product._id} className="productlist" >
+							<div >
+								<h4>Name :{product.productName}</h4>
+								<h4>Description :{product.productDescription}</h4>
+							</div>
 							<div>
 								<input 
 									style={{height:25}}
