@@ -1,4 +1,4 @@
-import {useState, useEffect, Fragment} from 'react'
+import {useState, Fragment} from 'react'
 import { FiAlignCenter, FiAlignJustify, FiAlignRight, FiAlignLeft } from "react-icons/fi";
 import { AiOutlineFontColors, AiOutlineVideoCamera, AiOutlineItalic, AiOutlineUnorderedList, AiOutlineBold } from "react-icons/ai";
 import { MdFormatUnderlined } from "react-icons/md";
@@ -53,14 +53,14 @@ const AddTask =() =>{
 		})
 	}
 
-	useEffect(() =>{
+	const getProducts =() =>{
 		axios.get("http://localhost:3001/read")
 			.then((response)=>{
 				setProductList(response.data)
 			}).catch(() => {
 				console.log("Err")
 			})
-	},[]);
+	};
 
 	const deleteProduct =(id) =>{
 		axios.delete(`http://localhost:3001/delete/${id}`)
@@ -139,11 +139,11 @@ const AddTask =() =>{
 					 	className='btn btn-block'/>
 			</div>
 			<div>
-				{/*<input 
+				<input 
 						onClick={getProducts}
 						type='button' 
 					   	value={`Show products`}
-					   	className='btn btn-block'/>*/}
+					   	className='btn btn-block'/>
 				{productList.map((product) => {
 					return ( 
 						<div key={product._id} className="productlist" >
