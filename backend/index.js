@@ -1,12 +1,13 @@
 const express = require ('express')
 const mongoose = require ('mongoose')
 const cors = require ('cors')
-const app = express()
-
 const MerchantModel = require('./Merchant.js')
 
-app.use(express.json())
+const app = express()
+
 app.use(cors());
+app.use(express.json())
+
 mongoose.connect('mongodb+srv://newuser:aditya_23@crud.igfry.mongodb.net/merchant?retryWrites=true&w=majority', {
   useNewUrlParser: true,
 })
@@ -22,11 +23,13 @@ app.post("/insert", async (req, res) => {
     productDescription: description,
     seoName : seoMeta,
     seoDescription : seoMetaDescription})
-  try {
-    await merchant.save()
-  }catch(err) {
-    console.log(err)
-  }
+    
+    await merchant.save((err, result) =>{
+      if(err) {
+        res.send(err)
+      }
+      res.send(result)
+    })
 })
 
 app.get("/read", async (req,res)=> {

@@ -27,7 +27,8 @@ const AddTask =() =>{
 			seoMeta: seoMeta, 
 			seoMetaDescription: seoMetaDescription
 		}).then(()=>{
-			console.log("Success")
+			console.log("Success");
+	
 		})
 
 		setName('')
@@ -53,8 +54,8 @@ const AddTask =() =>{
 	const deleteProduct =(id) =>{
 		axios.delete(`http://localhost:3001/delete/${id}`)
 		.then((response) => {
-			setProductList(productList.filter((val) => {
-				return val.id !==id
+			setProductList(productList.filter((product) => {
+				return product.id !==id
 			}))
 		});
 	}
@@ -131,11 +132,11 @@ const AddTask =() =>{
 						type='button' 
 					   	value={`Show products`}
 					   	className='btn btn-block'/>
-				{productList.map((val, key) => {
+				{productList.map((product) => {
 					return ( 
-						<div key={val._id} className="productlist">
-							<h4>Name :{val.productName}</h4>
-							<h4>Description :{val.productDescription}</h4>
+						<div key={product._id} className="productlist">
+							<h4>Name :{product.productName}</h4>
+							<h4>Description :{product.productDescription}</h4>
 							<div>
 								<input 
 									style={{height:25}}
@@ -143,14 +144,14 @@ const AddTask =() =>{
 									onChange ={(e)=>setNewName(e.target.value)}
 									placeholder='enter new name' />
 								<input
-									onClick={()=>{updateName(val._id)}}
+									onClick={()=>{updateName(product._id)}}
 									type='button'
 									value={'Update'} 	
 									style={{backgroundColor:'green', width:100}}
 									className='btn'
 								/>
 								<input
-									onClick={()=>{deleteProduct(val._id)}}
+									onClick={()=>{deleteProduct(product._id)}}
 									type='button'
 									value={'Delete'} 	
 									style={{backgroundColor:'green', width:100}}
