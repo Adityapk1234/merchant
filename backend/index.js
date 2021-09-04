@@ -2,6 +2,7 @@ const express = require ('express')
 const mongoose = require ('mongoose')
 const cors = require ('cors')
 const MerchantModel = require('./Merchant.js')
+require('dotenv').config();
 
 const app = express()
 
@@ -29,7 +30,7 @@ app.post("/insert", async (req, res) => {
 })
 
 app.get("/read", async (req,res)=> {
-  MerchantModel.find({}, (err, result) =>{
+  await MerchantModel.find({}, (err, result) =>{
     if(err) {
       res.send(err)
     }else {
@@ -59,6 +60,6 @@ app.delete("/delete/:id", async (req, res) => {
   res.send("Deleted");
 })
 
-app.listen(3001, () => {
+app.listen(process.env.PORT || 3001, () => {
   console.log('Server running on port 3001')
 })
