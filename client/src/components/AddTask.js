@@ -21,7 +21,7 @@ const AddTask =() =>{
 			return
 		}
 	
-		axios.post('https://merchant-product.herokuapp.com/insert', {
+		axios.post('https://merhcant-product.herokuapp.com/insert', {
 			name:name,
 			description: description,
 			seoMeta: seoMeta, 
@@ -42,7 +42,7 @@ const AddTask =() =>{
 	}
 
 	const updateName=(id)=>{
-		axios.put("https://merchant-product.herokuapp.com/update", {
+		axios.put("https://merhcant-product.herokuapp.com/update", {
 			backendnewName:newName,
 			id: id
 		}).then(() =>{
@@ -54,7 +54,7 @@ const AddTask =() =>{
 	}
 
 	const getProducts =() =>{
-		axios.get("https://merchant-product.herokuapp.com/read")
+		axios.get("https://merhcant-product.herokuapp.com/read")
 			.then((response)=>{
 				setProductList(response.data)
 			}).catch(() => {
@@ -63,7 +63,7 @@ const AddTask =() =>{
 	};
 
 	const deleteProduct =(id) =>{
-		axios.delete(`https://merchant-product.herokuapp.com/delete/${id}`)
+		axios.delete(`https://merhcant-product.herokuapp.com/delete/${id}`)
 		.then(() => {
 			setProductList(productList.filter((product) => {
 				return product._id !==id
